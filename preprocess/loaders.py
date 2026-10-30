@@ -1,7 +1,8 @@
 import os
-import pandas as pd
-from .exceptions import SchemaError
 
+import pandas as pd
+
+from .exceptions import SchemaError
 
 REQUIRED_COLUMNS = (
     "year", "month", "carrier", "carrier_name", "airport", "airport_name",
@@ -13,6 +14,7 @@ REQUIRED_COLUMNS = (
 
 
 class BaseLoader:
+
     extension = ""   # the child classes set this
 
     def __init__(self, path):
@@ -25,13 +27,16 @@ class BaseLoader:
 
     @property
     def path(self):
+        """The file this loader reads."""
         return self._path
 
     @property
     def rows_loaded(self):
+        """Rows in the last successful load() (0 if load() has not worked yet)."""
         return self._rows_loaded
 
     def load(self):
+        """Read the file, tidy the column names and check the columns. Returns a DataFrame."""
         if not os.path.isfile(self._path):
             raise FileNotFoundError("file not found: " + self._path)
         df = self._read()
@@ -66,7 +71,6 @@ class CsvLoader(BaseLoader):
 
 
 class ParquetLoader(BaseLoader):
-
     extension = ".parquet"
 
     def _read(self):
