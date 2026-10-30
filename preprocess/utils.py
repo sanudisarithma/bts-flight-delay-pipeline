@@ -1,4 +1,3 @@
-"""Two small helper functions."""
 import hashlib
 import os
 import platform
@@ -6,7 +5,6 @@ import sys
 
 
 def sha256_of(path):
-    """Return the SHA-256 of a file as a hex string (file is read in pieces)."""
     if not os.path.isfile(path):
         raise FileNotFoundError("file not found: " + path)
     h = hashlib.sha256()
@@ -20,7 +18,6 @@ def sha256_of(path):
 
 
 def system_info():
-    """Python / OS / hardware / library versions for the report."""
     import numpy
     import pandas
     import pyarrow
