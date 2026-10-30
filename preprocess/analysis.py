@@ -1,4 +1,3 @@
-"""Summary numbers on the cleaned data (the output of Cleaner.run)."""
 import numpy as np
 import pandas as pd
 
@@ -16,9 +15,8 @@ CAUSE_LABELS = {
 
 class DelayAnalyzer:
 
-
-    NEEDED = ("Usable", "year", "month", "carrier", "carrier_name", "airport", "airport_name",
-              "arr_flights", "arr_del15", "arr_cancelled", "arr_delay") + CAUSE_MINUTE_COLUMNS
+    NEEDED = ("Usable", "year", "month", "carrier", "carrier_label", "airport", "airport_label",
+              "arr_flights", "arr_arrived", "arr_del15", "arr_cancelled", "arr_delay") + CAUSE_MINUTE_COLUMNS
 
     def __init__(self, df):
         if not isinstance(df, pd.DataFrame):
@@ -64,7 +62,6 @@ class DelayAnalyzer:
         return self._rows.groupby("year")["month"].nunique()
 
     def last_full_year(self):
-        
         counts = self.months_per_year()
         full = counts[counts == 12]
         if len(full) == 0:
@@ -72,22 +69,30 @@ class DelayAnalyzer:
         return int(full.index.max())
 
     def overall_delay_rate(self, first_year=None):
-
         rows = self._select(first_year)
-        return float(rows["arr_del15"].sum() / rows["arr_flights"].sum())
+        arrived = rows["arr_arrived"].sum()
+        if arrived <= 0:
+            raise ValueError("no flights arrived in the selected rows")
+        return float(rows["arr_del15"].sum() / arrived)
+
+    def overall_cancel_rate(self, first_year=None):
+        rows = self._select(first_year)
+        scheduled = rows["arr_flights"].sum()
+        if scheduled <= 0:
+            raise ValueError("no flights in the selected rows")
+        return float(rows["arr_cancelled"].sum() / scheduled)
 
     def rate_by(self, column, min_flights=1000, first_year=None):
-
         if column not in self._rows.columns:
             raise ValueError("unknown column: " + str(column))
         if not isinstance(min_flights, int) or min_flights < 0:
             raise ValueError("min_flights must be a whole number >= 0")
         rows = self._select(first_year)
-        g = rows.groupby(column)[["arr_flights", "arr_del15", "arr_delay", "arr_cancelled"]].sum()
-        g["delay_rate"] = g["arr_del15"] / g["arr_flights"]
+        g = rows.groupby(column)[["arr_flights", "arr_arrived", "arr_del15", "arr_delay", "arr_cancelled"]].sum()
+        g = g[g["arr_arrived"] >= max(min_flights, 1)]      # also avoids dividing by zero
+        g["delay_rate"] = g["arr_del15"] / g["arr_arrived"]
         g["minutes_per_late_flight"] = (g["arr_delay"] / g["arr_del15"]).replace([np.inf, -np.inf], np.nan)
-        g["cancelled_per_100_flights"] = 100 * g["arr_cancelled"] / g["arr_flights"]
-        g = g[g["arr_flights"] >= min_flights]
+        g["cancelled_per_100_flights"] = 100 * g["arr_cancelled"] / g["arr_flights"]   # per 100 scheduled flights
         return g.sort_values("delay_rate", ascending=False)
 
     def cause_share(self, first_year=None):
