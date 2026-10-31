@@ -1,5 +1,7 @@
 import time
+
 import pandas as pd
+
 from .exceptions import CleaningError, FlightDataError, SchemaError
 
 TEXT_COLUMNS = ("carrier", "carrier_name", "airport", "airport_name")
@@ -15,14 +17,16 @@ CAUSE_COUNT_COLUMNS = ("carrier_ct", "weather_ct", "nas_ct", "security_ct", "lat
 CAUSE_MINUTE_COLUMNS = ("carrier_delay", "weather_delay", "nas_delay", "security_delay",
                         "late_aircraft_delay")
 
-KEY_COLUMNS = ("year", "month", "carrier", "airport")   
-MISMATCH_TOLERANCE = 1.0   
-FIRST_YEAR = 2000          
+KEY_COLUMNS = ("year", "month", "carrier", "airport")   # one row per carrier + airport + month
+
+COUNT_TOLERANCE = 0.5      # cause counts are rounded to 2 decimals, so a gap of half a flight is a real error
+MINUTE_TOLERANCE = 1.0     # allowed gap (minutes) when the cause minutes are added up
+FIRST_YEAR = 2000          # years outside this range are treated as impossible
 LAST_YEAR = 2030
 
 
 class CleaningStep:
-
+    
     name = "base step"
     needs = ()
 
@@ -39,22 +43,18 @@ class CleaningStep:
         return self._note
 
     def check_columns(self, df):
-
         missing = set(self.needs) - set(df.columns)
         if len(missing) > 0:
             raise SchemaError(missing)
 
     def apply(self, df):
-        """Run the step. Each child class overrides this."""
         raise NotImplementedError("each step must write its own apply()")
 
     def summary(self):
-        """One row for the scrub report."""
         return {"step": self.name, "records_affected": int(self._affected), "note": self._note}
 
 
 class TidyText(CleaningStep):
-
     name = "tidy text columns"
     needs = TEXT_COLUMNS
 
@@ -78,7 +78,6 @@ class TidyText(CleaningStep):
 
 
 class ConvertNumbers(CleaningStep):
-
     name = "convert number columns"
     needs = ("year", "month") + NUMBER_COLUMNS
 
@@ -97,7 +96,6 @@ class ConvertNumbers(CleaningStep):
 
 
 class RemoveExactDuplicates(CleaningStep):
-
     name = "remove exact duplicates"
 
     def apply(self, df):
@@ -107,13 +105,30 @@ class RemoveExactDuplicates(CleaningStep):
         return df[~is_copy].copy()
 
 
-class UnifyNames(CleaningStep):
+class FillBlankLateCount(CleaningStep):
+    name = "fill blank arr_del15 when no flight arrived"
+    needs = NUMBER_COLUMNS
 
-    name = "one name per carrier / airport code"
+    def apply(self, df):
+        self.check_columns(df)
+        out = df.copy()
+        other_numbers = [c for c in NUMBER_COLUMNS if c != "arr_del15"]
+        others_present = out[other_numbers].notna().all(axis=1)
+        nothing_arrived = (out["arr_cancelled"] + out["arr_diverted"]) == out["arr_flights"]
+        blank = out["arr_del15"].isna()
+        fill = blank & others_present & nothing_arrived
+        out.loc[fill, "arr_del15"] = 0.0
+        self._affected = int(fill.sum())
+        self._note = ("arr_del15 blank because every flight was cancelled/diverted, set to 0: " + str(int(fill.sum()))
+                      + "; arr_del15 blank for another reason (left blank): " + str(int((blank & ~fill).sum())))
+        return out
+
+
+class AddNameLabels(CleaningStep):
+    name = "add one name label per carrier / airport code"
     needs = ("year", "month", "carrier", "carrier_name", "airport", "airport_name")
 
-    def _fix(self, out, code_col, name_col):
-        """Change out[name_col] in place. Returns (codes with many names, rows changed)."""
+    def _label(self, out, code_col, name_col, label_col):
         ok = (out[code_col] != "") & (out[name_col] != "") & out["year"].notna() & out["month"].notna()
         known = out[ok]
         many = int((known.groupby(code_col)[name_col].nunique() > 1).sum())
@@ -122,26 +137,26 @@ class UnifyNames(CleaningStep):
         latest_rows = known.drop_duplicates(subset=code_col, keep="last")
         latest = dict(zip(latest_rows[code_col], latest_rows[name_col]))
 
-        new_names = out[code_col].map(latest)
-        new_names = new_names.fillna(out[name_col])   # keep the old name if the code has no latest name
-        changed = int((new_names != out[name_col]).sum())
-        out[name_col] = new_names
-        return many, changed
+        label = out[code_col].map(latest)
+        label = label.fillna(out[name_col])   # keep the row's own name if the code has no latest name
+        differs = int((label != out[name_col]).sum())
+        out[label_col] = label
+        return many, differs
 
     def apply(self, df):
         self.check_columns(df)
         out = df.copy()
-        many_c, changed_c = self._fix(out, "carrier", "carrier_name")
-        many_a, changed_a = self._fix(out, "airport", "airport_name")
-        self._affected = changed_c + changed_a
-        self._note = ("carrier codes with more than one name: " + str(many_c) + " (rows changed " + str(changed_c)
+        many_c, diff_c = self._label(out, "carrier", "carrier_name", "carrier_label")
+        many_a, diff_a = self._label(out, "airport", "airport_name", "airport_label")
+        self._affected = diff_c + diff_a
+        self._note = ("carrier codes with more than one name: " + str(many_c) + " (rows whose label differs: " + str(diff_c)
                       + "); airport codes with more than one name: " + str(many_a)
-                      + " (rows changed " + str(changed_a) + ")")
+                      + " (rows whose label differs: " + str(diff_a) + ")")
         return out
 
 
 class MakeDate(CleaningStep):
-
+    
     name = "make date column"
     needs = ("year", "month")
 
@@ -156,8 +171,25 @@ class MakeDate(CleaningStep):
         return out
 
 
-class FlagMissing(CleaningStep):
+class AddArrivedFlights(CleaningStep):
+    
+    name = "add arrived flights"
+    needs = ("arr_flights", "arr_cancelled", "arr_diverted")
 
+    def apply(self, df):
+        self.check_columns(df)
+        out = df.copy()
+        out["arr_arrived"] = out["arr_flights"] - out["arr_cancelled"] - out["arr_diverted"]
+        some_not_arrived = (out["arr_cancelled"] + out["arr_diverted"]) > 0
+        none_arrived = out["arr_arrived"] == 0
+        self._affected = int(some_not_arrived.sum())
+        self._note = ("rows with at least one cancelled or diverted flight: " + str(int(some_not_arrived.sum()))
+                      + "; rows where no flight arrived: " + str(int(none_arrived.sum())))
+        return out
+
+
+class FlagMissing(CleaningStep):
+    
     name = "flag missing values"
     needs = ("year", "month", "carrier", "airport") + NUMBER_COLUMNS
 
@@ -178,6 +210,7 @@ class FlagMissing(CleaningStep):
 
 class FlagDuplicateKeys(CleaningStep):
 
+
     name = "flag duplicate keys"
     needs = KEY_COLUMNS
 
@@ -191,28 +224,28 @@ class FlagDuplicateKeys(CleaningStep):
 
 
 class FlagImpossible(CleaningStep):
-
+    
     name = "flag impossible values"
-    needs = ("year", "month", "arr_flights", "arr_del15") + NUMBER_COLUMNS
+    needs = ("year", "month") + NUMBER_COLUMNS
 
     def apply(self, df):
         self.check_columns(df)
         out = df.copy()
         negative = (out[list(NUMBER_COLUMNS)] < 0).any(axis=1)
-        too_many_late = out["arr_del15"] > out["arr_flights"]
+        # late + cancelled + diverted flights can not be more than all the flights
+        too_many = (out["arr_del15"] + out["arr_cancelled"] + out["arr_diverted"]) > out["arr_flights"]
         bad_month = (out["month"] < 1) | (out["month"] > 12)
         bad_year = (out["year"] < FIRST_YEAR) | (out["year"] > LAST_YEAR)
-        out["Impossible"] = negative | too_many_late | bad_month | bad_year
+        out["Impossible"] = negative | too_many | bad_month | bad_year
         self._affected = int(out["Impossible"].sum())
         self._note = ("negative number: " + str(int(negative.sum()))
-                      + "; arr_del15 > arr_flights: " + str(int(too_many_late.sum()))
+                      + "; late + cancelled + diverted > arr_flights: " + str(int(too_many.sum()))
                       + "; month not 1-12: " + str(int(bad_month.sum()))
                       + "; year outside " + str(FIRST_YEAR) + "-" + str(LAST_YEAR) + ": " + str(int(bad_year.sum())))
         return out
 
 
 class FlagCauseMismatch(CleaningStep):
- 
 
     name = "flag cause totals that do not add up"
     needs = ("arr_del15", "arr_delay") + CAUSE_COUNT_COLUMNS + CAUSE_MINUTE_COLUMNS
@@ -223,8 +256,8 @@ class FlagCauseMismatch(CleaningStep):
         # min_count means: if any of the five is missing the sum is missing, so no flag
         count_sum = out[list(CAUSE_COUNT_COLUMNS)].sum(axis=1, min_count=len(CAUSE_COUNT_COLUMNS))
         minute_sum = out[list(CAUSE_MINUTE_COLUMNS)].sum(axis=1, min_count=len(CAUSE_MINUTE_COLUMNS))
-        count_bad = (count_sum - out["arr_del15"]).abs() > MISMATCH_TOLERANCE
-        minute_bad = (minute_sum - out["arr_delay"]).abs() > MISMATCH_TOLERANCE
+        count_bad = (count_sum - out["arr_del15"]).abs() > COUNT_TOLERANCE
+        minute_bad = (minute_sum - out["arr_delay"]).abs() > MINUTE_TOLERANCE
         out["CauseMismatch"] = count_bad | minute_bad
         self._affected = int(out["CauseMismatch"].sum())
         self._note = ("cause counts != arr_del15: " + str(int(count_bad.sum()))
@@ -233,6 +266,7 @@ class FlagCauseMismatch(CleaningStep):
 
 
 class MarkUsable(CleaningStep):
+    
 
     name = "mark usable rows"
     needs = ("arr_flights", "MissingValues", "DuplicateKey", "Impossible")
@@ -256,8 +290,10 @@ def default_steps():
         TidyText(),
         ConvertNumbers(),
         RemoveExactDuplicates(),
-        UnifyNames(),
+        FillBlankLateCount(),
+        AddNameLabels(),
         MakeDate(),
+        AddArrivedFlights(),
         FlagMissing(),
         FlagDuplicateKeys(),
         FlagImpossible(),
@@ -267,7 +303,7 @@ def default_steps():
 
 
 class Cleaner:
-
+    
     def __init__(self, steps):
         if not isinstance(steps, (list, tuple)) or len(steps) == 0:
             raise ValueError("steps must be a non-empty list of CleaningStep objects")
@@ -280,16 +316,13 @@ class Cleaner:
 
     @property
     def report(self):
-        """Report of the last successful run, as a new DataFrame."""
         return pd.DataFrame(self._report)
 
     @property
     def seconds(self):
-        """How long the last run() took."""
         return self._seconds
 
     def run(self, df):
-        """Clean df. See the class docstring for the contract."""
         if not isinstance(df, pd.DataFrame):
             raise ValueError("run() needs a pandas DataFrame, got " + type(df).__name__)
         if df.empty:
