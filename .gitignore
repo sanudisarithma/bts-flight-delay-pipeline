@@ -1,0 +1,6 @@
+
+__pycache__/
+*.pyc
+data/processed/
+data/spark_scaled/
+data/bench/
