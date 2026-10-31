@@ -1,17 +1,3 @@
-"""Task 2 - storage format investigation.
-
-Writes the raw data (all 21 columns) as CSV, JSON lines, pickle and Parquet, with and
-without compression, and measures:
-   file size | time to write | time to read everything | time to read ONE column
-Each timing is repeated 6 times, the first run is thrown away (warm-up) and the median and
-the range (min, max) of the other 5 are saved.
-
-YAML is far too slow for the whole file, so it is only tested on a small sample
-(compared with CSV on the same sample).
-
-Run from the project folder:  python scripts/step2_storage_benchmark.py
-(for a quick test:            python scripts/step2_storage_benchmark.py --rows 50000)
-"""
 import argparse
 import gc
 import json
@@ -27,16 +13,15 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from flightproc import config
-from flightproc import CsvLoader
-from flightproc.utils import system_info
+from preprocess import config
+from preprocess import CsvLoader
+from preprocess.utils import system_info
 
 REPEATS = 6              # the first one is the warm-up, so 5 timings are kept
 ONE_COLUMN = "arr_delay"
 
 
 def time_it(function):
-    """Run function() REPEATS times. Returns (median, min, max) of runs 2..6 in seconds."""
     times = []
     for i in range(REPEATS):
         gc.collect()
@@ -91,7 +76,6 @@ def get_formats():
 
 
 def dtype_changes(original, read_back):
-    """How many columns came back with a different data type than they went in with."""
     count = 0
     for col in original.columns:
         if col in read_back.columns and original[col].dtype != read_back[col].dtype:
@@ -100,7 +84,6 @@ def dtype_changes(original, read_back):
 
 
 def yaml_test(df, n_rows):
-    """YAML against CSV on a small sample."""
     import yaml
     if hasattr(yaml, "CSafeDumper"):
         dumper, loader = yaml.CSafeDumper, yaml.CSafeLoader   # the fast C versions
