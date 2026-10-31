@@ -1,0 +1,88 @@
+{
+  "total_rows_after_dedup": 398233,
+  "usable_rows": 397574,
+  "excluded_rows": 659,
+  "overall_delay_rate": 0.1964259682983101,
+  "overall_cancel_rate": 0.018772496994721072,
+  "last_full_year": 2024,
+  "recent_window": [
+    2022,
+    2024
+  ],
+  "best_year": 2020,
+  "best_year_rate": 0.099503896831929,
+  "worst_year": 2007,
+  "worst_year_rate": 0.24789229549237393,
+  "best_month": 9,
+  "best_month_rate": 0.151344057365995,
+  "worst_month": 6,
+  "worst_month_rate": 0.23546551036633115,
+  "recent_delay_rate": 0.20618441919155842,
+  "carriers_ranked": 15,
+  "worst_carrier": "F9",
+  "worst_carrier_rate": 0.30381836336906176,
+  "best_carrier": "PT",
+  "best_carrier_rate": 0.14668628119102536,
+  "cause_share_all_years": {
+    "Carrier": 0.31417515762564346,
+    "Weather": 0.05358895841790529,
+    "NAS (air traffic system)": 0.24619549649778583,
+    "Security": 0.0017143050603949893,
+    "Late aircraft": 0.38432608239827043
+  },
+  "airports_ranked": 50,
+  "worst_airport": "SJU",
+  "worst_airport_rate": 0.2897992048714207,
+  "best_airport": "SLC",
+  "best_airport_rate": 0.1509833656893001,
+  "airports_in_correlation": 347,
+  "spearman_airport_size_vs_rate": 0.48873213375550123,
+  "model": {
+    "test_year": 2024,
+    "train_rows": 344399,
+    "test_rows": 20316,
+    "test_pairs_not_seen_in_training": 114,
+    "model_results": [
+      {
+        "model": "baseline: same value for all",
+        "mae": 0.08030638135136932,
+        "rmse": 0.10176319289873272,
+        "r2": -0.00019338955069869712
+      },
+      {
+        "model": "baseline: carrier+airport average",
+        "mae": 0.07484311641056589,
+        "rmse": 0.09710800101156619,
+        "r2": 0.08922194350026003
+      },
+      {
+        "model": "HistGradientBoostingRegressor",
+        "mae": 0.06918900055879622,
+        "rmse": 0.08992769545010044,
+        "r2": 0.2189308976578639
+      }
+    ],
+    "feature_importance": [
+      {
+        "feature": "carrier",
+        "mae_increase": 0.012373034634583422
+      },
+      {
+        "feature": "month",
+        "mae_increase": 0.011877606070276808
+      },
+      {
+        "feature": "arr_flights",
+        "mae_increase": 0.0014020973801626758
+      },
+      {
+        "feature": "airport",
+        "mae_increase": 0.000736895422003167
+      },
+      {
+        "feature": "year",
+        "mae_increase": 0.0
+      }
+    ]
+  }
+}

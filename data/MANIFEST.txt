@@ -1,0 +1,5 @@
+﻿source: PASTE-THE-EXACT-PAGE-URL-YOU-DOWNLOADED-FROM
+downloaded: PASTE-THE-REAL-DOWNLOAD-DATE
+file: Airline_Delay_Cause.csv
+bytes: 53157726
+sha256: 74bb02986758aa8fa7d74b723c9a9cfeaeb6ee9c97589fcba5c58607cc16922c
