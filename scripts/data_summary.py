@@ -1,13 +1,4 @@
-"""OSEMN - Obtain.
 
-Checks the raw file data/Airline_Delay_Cause.csv:
-  - SHA-256 checksum (compared with data/MANIFEST.txt)
-  - number of rows and columns, years covered
-  - that it has all the columns the package needs
-Saves a small summary to results/obtain_summary.json for the report.
-
-Run from the project folder:  python scripts/step1_obtain.py
-"""
 import json
 import os
 import sys

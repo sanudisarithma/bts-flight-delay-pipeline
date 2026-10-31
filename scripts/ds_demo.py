@@ -1,7 +1,4 @@
-"""Timing for the data structure choice in Task 1 (list vs set, list vs tuple as dict key).
 
-Uses the airport column of the real data. Run:  python scripts/ds_choice_demo.py
-"""
 import os
 import random
 import sys

@@ -1,14 +1,6 @@
-<<<<<<< HEAD
 
-__pycache__/
-*.pyc
-data/processed/
-data/spark_scaled/
-data/bench/
-=======
 data/bench/
 data/processed/
 data/spark_scaled/
 __pycache__/
 *.pyc
->>>>>>> 10ae66a57e7ee72215187cdbbd12d3f4c808e2b9

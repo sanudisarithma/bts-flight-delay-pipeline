@@ -1,13 +1,3 @@
-"""Cleaning steps and the Cleaner that runs them.
-
-Every step is a child of CleaningStep and has an apply(df) method, so the Cleaner
-can run any list of steps without knowing what each one does (polymorphism).
-Each step counts how many records it touched. The Scrub section of the report
-is built from these counts.
-
-Main rule: bad rows are FLAGGED, not deleted. The only rows that are removed
-are exact duplicates, because they carry no extra information.
-"""
 import time
 
 import pandas as pd
@@ -36,15 +26,7 @@ LAST_YEAR = 2030
 
 
 class CleaningStep:
-    """Parent class of all cleaning steps.
 
-    Contract for the child classes:
-        apply(df) takes a DataFrame and returns a NEW DataFrame. It never changes df.
-        After apply(), .affected is the number of records the step touched and
-        .note is a short sentence for the report.
-
-    Raises SchemaError if df is missing a column listed in `needs`.
-    """
 
     name = "base step"
     needs = ()
@@ -55,34 +37,26 @@ class CleaningStep:
 
     @property
     def affected(self):
-        """Number of records touched by the last apply()."""
         return self._affected
 
     @property
     def note(self):
-        """Short explanation of what the last apply() found."""
         return self._note
 
     def check_columns(self, df):
-        """Raise SchemaError if a needed column is missing."""
         missing = set(self.needs) - set(df.columns)
         if len(missing) > 0:
             raise SchemaError(missing)
 
     def apply(self, df):
-        """Run the step. Each child class overrides this."""
         raise NotImplementedError("each step must write its own apply()")
 
     def summary(self):
-        """One row for the scrub report."""
         return {"step": self.name, "records_affected": int(self._affected), "note": self._note}
 
 
 class TidyText(CleaningStep):
-    """Strips spaces, squeezes double spaces, and makes carrier/airport codes upper case.
 
-    Missing text becomes an empty string "" (later steps treat "" as missing).
-    """
 
     name = "tidy text columns"
     needs = TEXT_COLUMNS
@@ -107,7 +81,6 @@ class TidyText(CleaningStep):
 
 
 class ConvertNumbers(CleaningStep):
-    """Turns the number columns into real numbers. Text that is not a number becomes missing."""
 
     name = "convert number columns"
     needs = ("year", "month") + NUMBER_COLUMNS
@@ -127,7 +100,6 @@ class ConvertNumbers(CleaningStep):
 
 
 class RemoveExactDuplicates(CleaningStep):
-    """Removes rows that are the same as an earlier row in every column (first copy is kept)."""
 
     name = "remove exact duplicates"
 
@@ -139,13 +111,7 @@ class RemoveExactDuplicates(CleaningStep):
 
 
 class FillBlankLateCount(CleaningStep):
-    """Fills arr_del15 with 0 when no flight arrived.
 
-    In the real file arr_del15 is blank when EVERY flight in the row was cancelled or diverted
-    (cancelled + diverted == arr_flights). Nothing arrived, so nothing can be late. That blank is
-    not missing data, so we fill it. Rows where arr_del15 is blank for any other reason are left
-    alone and are flagged as missing later.
-    """
 
     name = "fill blank arr_del15 when no flight arrived"
     needs = NUMBER_COLUMNS
@@ -166,19 +132,12 @@ class FillBlankLateCount(CleaningStep):
 
 
 class AddNameLabels(CleaningStep):
-    """Adds carrier_label and airport_label: ONE name per code (a dict: code -> name).
-
-    Airlines and airports get renamed over the years, so one code can have several names.
-    The label is the name used in the latest month. The original name columns are NOT changed,
-    because sometimes a code is reused by a different company (for example OH was Comair and
-    is now PSA Airlines), and overwriting would hide that.
-    """
+ 
 
     name = "add one name label per carrier / airport code"
     needs = ("year", "month", "carrier", "carrier_name", "airport", "airport_name")
 
     def _label(self, out, code_col, name_col, label_col):
-        """Adds out[label_col]. Returns (codes with many names, rows whose label differs from their name)."""
         ok = (out[code_col] != "") & (out[name_col] != "") & out["year"].notna() & out["month"].notna()
         known = out[ok]
         many = int((known.groupby(code_col)[name_col].nunique() > 1).sum())
@@ -206,7 +165,6 @@ class AddNameLabels(CleaningStep):
 
 
 class MakeDate(CleaningStep):
-    """Adds a `date` column (first day of the month) from year and month."""
 
     name = "make date column"
     needs = ("year", "month")
@@ -223,13 +181,7 @@ class MakeDate(CleaningStep):
 
 
 class AddArrivedFlights(CleaningStep):
-    """Adds arr_arrived = arr_flights - arr_cancelled - arr_diverted.
-
-    arr_flights counts every scheduled arrival INCLUDING cancelled and diverted flights
-    (checked on the real data: arr_cancelled is never bigger than arr_flights, and 270 rows have
-    every flight cancelled). A flight that was cancelled or diverted cannot arrive 15+ minutes late,
-    so delay rates use arr_arrived as the denominator.
-    """
+  
 
     name = "add arrived flights"
     needs = ("arr_flights", "arr_cancelled", "arr_diverted")
@@ -247,7 +199,6 @@ class AddArrivedFlights(CleaningStep):
 
 
 class FlagMissing(CleaningStep):
-    """Adds MissingValues = True when a number or a carrier/airport code is missing."""
 
     name = "flag missing values"
     needs = ("year", "month", "carrier", "airport") + NUMBER_COLUMNS
@@ -268,11 +219,7 @@ class FlagMissing(CleaningStep):
 
 
 class FlagDuplicateKeys(CleaningStep):
-    """Adds DuplicateKey = True for rows that share year+month+carrier+airport with another row.
 
-    There should be only one row per key. If two rows share a key but have different numbers
-    we cannot know which one is right, so every copy is flagged (not deleted).
-    """
 
     name = "flag duplicate keys"
     needs = KEY_COLUMNS
@@ -287,7 +234,6 @@ class FlagDuplicateKeys(CleaningStep):
 
 
 class FlagImpossible(CleaningStep):
-    """Adds Impossible = True for values that cannot be true."""
 
     name = "flag impossible values"
     needs = ("year", "month") + NUMBER_COLUMNS
@@ -310,11 +256,7 @@ class FlagImpossible(CleaningStep):
 
 
 class FlagCauseMismatch(CleaningStep):
-    """Adds CauseMismatch = True when the delay causes do not add up to the totals.
 
-    The five cause counts should add up to arr_del15 and the five cause minutes should add up
-    to arr_delay. These rows are flagged but still used (see the report for why).
-    """
 
     name = "flag cause totals that do not add up"
     needs = ("arr_del15", "arr_delay") + CAUSE_COUNT_COLUMNS + CAUSE_MINUTE_COLUMNS
@@ -335,11 +277,7 @@ class FlagCauseMismatch(CleaningStep):
 
 
 class MarkUsable(CleaningStep):
-    """Adds Usable = True for rows that go into the analysis.
 
-    A row is NOT usable if it has missing values, a duplicate key, an impossible value,
-    or zero flights (a delay rate needs at least one flight).
-    """
 
     name = "mark usable rows"
     needs = ("arr_flights", "MissingValues", "DuplicateKey", "Impossible")
@@ -359,9 +297,7 @@ class MarkUsable(CleaningStep):
 
 
 def default_steps():
-    """The normal list of steps. The ORDER matters:
-    numbers must be converted before they are compared, the blank arr_del15 values must be filled
-    before missing values are flagged, and the flags must exist before MarkUsable."""
+
     return [
         TidyText(),
         ConvertNumbers(),
@@ -379,15 +315,7 @@ def default_steps():
 
 
 class Cleaner:
-    """Runs a list of CleaningStep objects one after another and keeps a report.
 
-    Contract:
-        steps must be a non-empty list of CleaningStep objects (ValueError otherwise).
-        run(df) needs a non-empty DataFrame (ValueError otherwise) and returns the cleaned
-        DataFrame. The DataFrame you pass in is never changed.
-        If a step fails, CleaningError (or SchemaError) is raised and the old report is
-        kept, so nothing is left half-changed.
-    """
 
     def __init__(self, steps):
         if not isinstance(steps, (list, tuple)) or len(steps) == 0:
@@ -401,16 +329,13 @@ class Cleaner:
 
     @property
     def report(self):
-        """Report of the last successful run, as a new DataFrame."""
         return pd.DataFrame(self._report)
 
     @property
     def seconds(self):
-        """How long the last run() took."""
         return self._seconds
 
     def run(self, df):
-        """Clean df. See the class docstring for the contract."""
         if not isinstance(df, pd.DataFrame):
             raise ValueError("run() needs a pandas DataFrame, got " + type(df).__name__)
         if df.empty:

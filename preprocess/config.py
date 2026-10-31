@@ -15,7 +15,6 @@ FIG_DIR = os.path.join(ROOT, "figures")
 
 
 def make_folders():
-    """Create the output folders if they are not there yet."""
     for folder in (PROCESSED_DIR, BENCH_DIR, SPARK_DIR, RESULTS_DIR, FIG_DIR):
         if not os.path.isdir(folder):
             os.makedirs(folder)
