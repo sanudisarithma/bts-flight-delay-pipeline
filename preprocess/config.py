@@ -1,4 +1,4 @@
-"""Paths used by the scripts. Everything is relative to the project folder."""
+
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
