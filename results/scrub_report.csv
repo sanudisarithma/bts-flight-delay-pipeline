@@ -1,0 +1,13 @@
+step,records_affected,note,rows_before,rows_after
+tidy text columns,0,"rows changed (spaces / upper case): carrier=0, carrier_name=0, airport=0, airport_name=0",398233,398233
+convert number columns,0,values that were not numbers and are now missing: 0,398233,398233
+remove exact duplicates,0,"rows identical to an earlier row, removed",398233,398233
+fill blank arr_del15 when no flight arrived,293,"arr_del15 blank because every flight was cancelled/diverted, set to 0: 293; arr_del15 blank for another reason (left blank): 657",398233,398233
+add one name label per carrier / airport code,159694,carrier codes with more than one name: 14 (rows whose label differs: 141018); airport codes with more than one name: 24 (rows whose label differs: 18676),398233,398233
+make date column,0,rows where year/month do not make a valid date: 0,398233,398233
+add arrived flights,254672,rows with at least one cancelled or diverted flight: 254672; rows where no flight arrived: 448,398233,398233
+flag missing values,657,arr_flights missing: 657; any number missing: 657; carrier or airport code missing: 0,398233,398233
+flag duplicate keys,0,rows sharing year+month+carrier+airport with another row (all copies flagged),398233,398233
+flag impossible values,2,negative number: 2; late + cancelled + diverted > arr_flights: 0; month not 1-12: 0; year outside 2000-2030: 0,398233,398233
+flag cause totals that do not add up,10,cause counts != arr_del15: 10; cause minutes != arr_delay: 9,398233,398233
+mark usable rows,659,"rows left out of the analysis: 659 (of these, only because of zero flights: 0)",398233,398233

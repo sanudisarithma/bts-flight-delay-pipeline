@@ -1,0 +1,78 @@
+kind,code,name,rows,first_month,last_month
+airport,BFM,"Mobile, AL: Mobile Downtown",12,201905,202005
+airport,BFM,"Mobile, AL: Mobile International",1,201912,201912
+airport,BLV,"Belleville, IL: Scott AFB MidAmerica St Louis",42,201801,202501
+airport,BLV,"Belleville, IL: Scott AFB/MidAmerica",43,201901,202209
+airport,CNY,"Moab, UT: Canyonlands Field",57,201403,202209
+airport,CNY,"Moab, UT: Canyonlands Regional",26,201805,202401
+airport,CRW,"Charleston/Dunbar, WV: Yeager",867,200306,202209
+airport,CRW,"Charleston/Dunbar, WV: West Virginia International Yeager",183,201801,202501
+airport,GCC,"Gillette, WY: Gillette Campbell County",178,200803,202209
+airport,GCC,"Gillette, WY: Northeast Wyoming Regional",42,201801,202501
+airport,HYA,"Hyannis, MA: Barnstable Municipal-Boardman/Polando Field",33,201406,202209
+airport,HYA,"Hyannis, MA: Cape Cod Gateway",21,201805,202409
+airport,ITH,"Ithaca/Cortland, NY: Ithaca Tompkins Regional",210,200808,202209
+airport,ITH,"Ithaca/Cortland, NY: Ithaca Tompkins International",110,201801,202501
+airport,LAS,"Las Vegas, NV: McCarran International",2908,200306,202209
+airport,LAS,"Las Vegas, NV: Harry Reid International",513,201801,202501
+airport,MFE,"Mission/McAllen/Edinburg, TX: McAllen Miller International",1005,200306,202305
+airport,MFE,"Mission/McAllen/Edinburg, TX: McAllen International",135,202306,202501
+airport,MHT,"Manchester, NH: Manchester-Boston Regional",1429,200306,202209
+airport,MHT,"Manchester, NH: Manchester Boston Regional",322,201801,202501
+airport,MLB,"Melbourne, FL: Melbourne International",473,200306,202209
+airport,MLB,"Melbourne, FL: Melbourne Orlando International",124,201801,202501
+airport,MLI,"Moline, IL: Quad City International",1035,200306,202209
+airport,MLI,"Moline, IL: Quad Cities International",278,201801,202501
+airport,MQT,"Marquette, MI: Sawyer International",327,200306,202305
+airport,MQT,"Marquette, MI: Marquette Sawyer Regional",49,202306,202501
+airport,MSO,"Missoula, MT: Missoula International",682,200306,202209
+airport,MSO,"Missoula, MT: Missoula Montana",309,201801,202501
+airport,OAK,"Oakland, CA: Metropolitan Oakland International",1971,200306,202209
+airport,OAK,"Oakland, CA: Metro Oakland International",387,201801,202501
+airport,PVD,"Providence, RI: Theodore Francis Green State",2053,200306,202209
+airport,PVD,"Providence, RI: Rhode Island Tf Green International",624,201801,202501
+airport,RDD,"Redding, CA: Redding Municipal",264,200306,202305
+airport,RDD,"Redding, CA: Redding Regional",25,202306,202501
+airport,RIW,"Riverton/Lander, WY: Riverton Regional",32,202001,202209
+airport,RIW,"Riverton/Lander, WY: Central Wyoming Regional",29,202206,202501
+airport,ROA,"Roanoke, VA: Roanoke Blacksburg Regional Woodrum Field",829,200306,202209
+airport,ROA,"Roanoke, VA: Roanoke Blacksburg Regional",376,201801,202501
+airport,ROC,"Rochester, NY: Greater Rochester International",2240,200306,202209
+airport,ROC,"Rochester, NY: Frederick Douglass Grtr Rochester International",683,201801,202501
+airport,ROW,"Roswell, NM: Roswell International Air Center",196,200508,202209
+airport,ROW,"Roswell, NM: Roswell Air Center",67,201801,202501
+airport,SCK,"Stockton, CA: Stockton Metro",43,201801,202501
+airport,SCK,"Stockton, CA: Stockton Metropolitan",51,201901,202209
+airport,TOL,"Toledo, OH: Toledo Express",387,200306,202209
+airport,TOL,"Toledo, OH: Eugene F Kranz Toledo Express",78,201801,202501
+airport,XNA,"Fayetteville, AR: Northwest Arkansas Regional",1405,200306,202209
+airport,XNA,"Fayetteville, AR: Northwest Arkansas National",506,201801,202501
+carrier,9E,Pinnacle Airlines Inc.,6454,200701,201307
+carrier,9E,Endeavor Air Inc.,9346,201308,202501
+carrier,AA,American Airlines Inc.,14438,200306,201712
+carrier,AA,American Airlines Network,9253,201801,202501
+carrier,AS,Alaska Airlines Inc.,9130,200306,201712
+carrier,AS,Alaska Airlines Network,6554,201801,202501
+carrier,C5,"Commutair Aka Champlain Enterprises, Inc.",2646,201801,202210
+carrier,C5,CommuteAir LLC dba CommuteAir,1495,202211,202501
+carrier,DH,Atlantic Coast Airlines,1253,200306,200409
+carrier,DH,Independence Air,671,200410,200512
+carrier,DL,Delta Air Lines Inc.,20580,200306,201712
+carrier,DL,Delta Air Lines Network,11528,201801,202501
+carrier,EV,Atlantic Southeast Airlines,12204,200306,201112
+carrier,EV,ExpressJet Airlines Inc.,13166,201201,201903
+carrier,EV,ExpressJet Airlines LLC,1445,201904,202009
+carrier,F9,Frontier Airlines Inc.,7433,200505,201712
+carrier,F9,Frontier Airlines,7458,201801,202501
+carrier,HA,Hawaiian Airlines Inc.,2625,200311,201712
+carrier,HA,Hawaiian Airlines Network,1622,201801,202501
+carrier,MQ,American Eagle Airlines Inc.,15409,200306,201403
+carrier,MQ,Envoy Air,14272,201404,202501
+carrier,NK,Spirit Air Lines,1257,201501,201712
+carrier,NK,Spirit Airlines,4471,201801,202501
+carrier,OH,Comair Inc.,7775,200401,201012
+carrier,OH,PSA Airlines Inc.,7690,201801,202501
+carrier,UA,United Air Lines Inc.,13980,200306,201712
+carrier,UA,United Air Lines Network,8777,201801,202501
+carrier,WN,Southwest Airlines Co.,12668,200306,201712
+carrier,WN,Southwest Airlines,8317,201801,202501
