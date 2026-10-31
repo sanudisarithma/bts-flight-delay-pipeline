@@ -1,0 +1,11 @@
+{
+  "file": "Airline_Delay_Cause.csv",
+  "sha256": "74bb02986758aa8fa7d74b723c9a9cfeaeb6ee9c97589fcba5c58607cc16922c",
+  "size_mb": 53.2,
+  "rows": 398233,
+  "columns": 21,
+  "first_year": 2003,
+  "last_year": 2025,
+  "carriers": 38,
+  "airports": 425
+}

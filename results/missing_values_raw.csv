@@ -1,0 +1,16 @@
+column,missing,percent
+arr_del15,950,0.239
+arr_flights,657,0.165
+carrier_ct,657,0.165
+weather_ct,657,0.165
+nas_ct,657,0.165
+security_ct,657,0.165
+late_aircraft_ct,657,0.165
+arr_cancelled,657,0.165
+arr_diverted,657,0.165
+arr_delay,657,0.165
+carrier_delay,657,0.165
+weather_delay,657,0.165
+nas_delay,657,0.165
+security_delay,657,0.165
+late_aircraft_delay,657,0.165
