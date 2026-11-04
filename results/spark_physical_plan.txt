@@ -1,0 +1,63 @@
+== Physical Plan ==
+AdaptiveSparkPlan (10)
++- Sort (9)
+   +- Exchange (8)
+      +- Project (7)
+         +- HashAggregate (6)
+            +- Exchange (5)
+               +- HashAggregate (4)
+                  +- Project (3)
+                     +- Filter (2)
+                        +- Scan parquet  (1)
+
+
+(1) Scan parquet 
+Output [5]: [year#0L, carrier#1, arr_arrived#2, arr_del15#3, Usable#4]
+Batched: true
+Location: InMemoryFileIndex [file:/D:/Freelance/Sanudi NIBM/Code/data/spark_scaled/rows_x25.parquet]
+PushedFilters: [IsNotNull(Usable), EqualTo(Usable,true)]
+ReadSchema: struct<year:bigint,carrier:string,arr_arrived:double,arr_del15:double,Usable:boolean>
+
+(2) Filter
+Input [5]: [year#0L, carrier#1, arr_arrived#2, arr_del15#3, Usable#4]
+Condition : (isnotnull(Usable#4) AND Usable#4)
+
+(3) Project
+Output [4]: [year#0L, carrier#1, arr_arrived#2, arr_del15#3]
+Input [5]: [year#0L, carrier#1, arr_arrived#2, arr_del15#3, Usable#4]
+
+(4) HashAggregate
+Input [4]: [year#0L, carrier#1, arr_arrived#2, arr_del15#3]
+Keys [2]: [year#0L, carrier#1]
+Functions [2]: [partial_sum(arr_arrived#2), partial_sum(arr_del15#3)]
+Aggregate Attributes [2]: [sum#16, sum#17]
+Results [4]: [year#0L, carrier#1, sum#18, sum#19]
+
+(5) Exchange
+Input [4]: [year#0L, carrier#1, sum#18, sum#19]
+Arguments: hashpartitioning(year#0L, carrier#1, 200), ENSURE_REQUIREMENTS, [plan_id=23]
+
+(6) HashAggregate
+Input [4]: [year#0L, carrier#1, sum#18, sum#19]
+Keys [2]: [year#0L, carrier#1]
+Functions [2]: [sum(arr_arrived#2), sum(arr_del15#3)]
+Aggregate Attributes [2]: [sum(arr_arrived#2)#13, sum(arr_del15#3)#14]
+Results [4]: [year#0L, carrier#1, sum(arr_arrived#2)#13 AS arrived#6, sum(arr_del15#3)#14 AS late#7]
+
+(7) Project
+Output [5]: [year#0L, carrier#1, arrived#6, late#7, (late#7 / arrived#6) AS delay_rate#15]
+Input [4]: [year#0L, carrier#1, arrived#6, late#7]
+
+(8) Exchange
+Input [5]: [year#0L, carrier#1, arrived#6, late#7, delay_rate#15]
+Arguments: rangepartitioning(year#0L ASC NULLS FIRST, carrier#1 ASC NULLS FIRST, 200), ENSURE_REQUIREMENTS, [plan_id=27]
+
+(9) Sort
+Input [5]: [year#0L, carrier#1, arrived#6, late#7, delay_rate#15]
+Arguments: [year#0L ASC NULLS FIRST, carrier#1 ASC NULLS FIRST], true, 0
+
+(10) AdaptiveSparkPlan
+Output [5]: [year#0L, carrier#1, arrived#6, late#7, delay_rate#15]
+Arguments: isFinalPlan=false
+
+
