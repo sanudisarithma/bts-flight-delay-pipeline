@@ -1,0 +1,37 @@
+[
+  {
+    "step": "pytest_output",
+    "exit_code": 5,
+    "elapsed_seconds": 1.11
+  },
+  {
+    "step": "ds_choice_demo",
+    "exit_code": 0,
+    "elapsed_seconds": 11.75
+  },
+  {
+    "step": "storage_run",
+    "exit_code": 1,
+    "elapsed_seconds": 149.09
+  },
+  {
+    "step": "data_summary_run",
+    "exit_code": 0,
+    "elapsed_seconds": 14.26
+  },
+  {
+    "step": "osemn_run",
+    "exit_code": 0,
+    "elapsed_seconds": 39.22
+  },
+  {
+    "step": "spark_run",
+    "exit_code": 0,
+    "elapsed_seconds": 219.26
+  },
+  {
+    "step": "storage_retry",
+    "exit_code": 0,
+    "elapsed_seconds": 282.45
+  }
+]

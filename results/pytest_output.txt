@@ -1,0 +1,7 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.2.0, pluggy-1.7.0 -- D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Personal\projects\Sanudi\bts-flight-delay-pipeline
+collecting ... collected 0 items
+
+============================ no tests ran in 0.05s ============================

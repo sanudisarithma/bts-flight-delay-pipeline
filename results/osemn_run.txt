@@ -1,0 +1,59 @@
+== Obtain ==
+  checksum matches MANIFEST.txt
+  rows: 398,233  columns: 21
+== Scrub ==
+  columns with missing values in the raw file: 15
+  codes with more than one name: carriers 14, airports 24  (results/code_name_history.csv)
+                                         step  records_affected  rows_before  rows_after
+                            tidy text columns                 0       398233      398233
+                       convert number columns                 0       398233      398233
+                      remove exact duplicates                 0       398233      398233
+  fill blank arr_del15 when no flight arrived               293       398233      398233
+add one name label per carrier / airport code            159694       398233      398233
+                             make date column                 0       398233      398233
+                          add arrived flights            254672       398233      398233
+                          flag missing values               657       398233      398233
+                          flag duplicate keys                 0       398233      398233
+                       flag impossible values                 2       398233      398233
+         flag cause totals that do not add up                10       398233      398233
+                             mark usable rows               659       398233      398233
+  - tidy text columns: rows changed (spaces / upper case): carrier=0, carrier_name=0, airport=0, airport_name=0
+  - convert number columns: values that were not numbers and are now missing: 0
+  - remove exact duplicates: rows identical to an earlier row, removed
+  - fill blank arr_del15 when no flight arrived: arr_del15 blank because every flight was cancelled/diverted, set to 0: 293; arr_del15 blank for another reason (left blank): 657
+  - add one name label per carrier / airport code: carrier codes with more than one name: 14 (rows whose label differs: 141018); airport codes with more than one name: 24 (rows whose label differs: 18676)
+  - make date column: rows where year/month do not make a valid date: 0
+  - add arrived flights: rows with at least one cancelled or diverted flight: 254672; rows where no flight arrived: 448
+  - flag missing values: arr_flights missing: 657; any number missing: 657; carrier or airport code missing: 0
+  - flag duplicate keys: rows sharing year+month+carrier+airport with another row (all copies flagged)
+  - flag impossible values: negative number: 2; late + cancelled + diverted > arr_flights: 0; month not 1-12: 0; year outside 2000-2030: 0
+  - flag cause totals that do not add up: cause counts != arr_del15: 10; cause minutes != arr_delay: 9
+  - mark usable rows: rows left out of the analysis: 659 (of these, only because of zero flights: 0)
+  cleaning took 7.93 seconds
+  cleaned data saved to D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\data\processed\clean.parquet
+== Explore ==
+  saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig1_delay_rate_by_year.png
+  saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig2_delay_rate_by_month.png
+  saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig3_delay_rate_by_carrier.png
+  saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig4_delay_causes_by_year.png
+  overall delay rate 0.196; recent 0.206
+  spearman(airport size, delay rate) = 0.489
+== Model ==
+  train: years before 2024 (344,399 rows)   test: 2024 (20,316 rows)
+                            model    mae   rmse      r2
+     baseline: same value for all 0.0803 0.1018 -0.0002
+baseline: carrier+airport average 0.0748 0.0971  0.0892
+    HistGradientBoostingRegressor 0.0692 0.0899  0.2189
+    feature  mae_increase
+    carrier       0.01237
+      month       0.01188
+arr_flights       0.00140
+    airport       0.00074
+       year       0.00000
+== iNterpret ==
+  19.6% of arrived flights were 15+ min late over the whole data (1.9% of scheduled flights were cancelled).
+  Lowest year 2020 (10.0%), highest year 2007 (24.8%).
+  Best month 9 (15.1%), worst month 6 (23.5%).
+  Carriers 2022-2024: worst F9 (30.4%), best PT (14.7%).
+  Lowest test MAE: HistGradientBoostingRegressor (0.0692).
+  saved results/key_findings.json

@@ -1,12 +1,12 @@
 {
-  "python": "3.14.7",
+  "python": "3.14.2",
   "os": "Windows-11-10.0.26300-SP0",
-  "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
-  "logical_cores": 16,
+  "processor": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+  "logical_cores": 12,
   "pandas": "2.3.3",
-  "numpy": "2.5.2",
-  "pyarrow": "24.0.0",
-  "ram_gb": 17.0,
+  "numpy": "2.5.4",
+  "pyarrow": "26.0.1",
+  "ram_gb": 34.0,
   "rows": 398233,
   "columns": 21,
   "timings_kept_per_measurement": 5

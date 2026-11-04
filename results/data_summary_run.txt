@@ -1,0 +1,30 @@
+raw file: D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\data\Airline_Delay_Cause.csv
+size: 53.2 MB
+sha256: 74bb02986758aa8fa7d74b723c9a9cfeaeb6ee9c97589fcba5c58607cc16922c
+checksum is in MANIFEST.txt -> raw file is unchanged
+rows: 398,233   columns: 21
+years: 2003 to 2025
+carriers: 38   airports: 425
+column types:
+year                     int64
+month                    int64
+carrier                 object
+carrier_name            object
+airport                 object
+airport_name            object
+arr_flights            float64
+arr_del15              float64
+carrier_ct             float64
+weather_ct             float64
+nas_ct                 float64
+security_ct            float64
+late_aircraft_ct       float64
+arr_cancelled          float64
+arr_diverted           float64
+arr_delay              float64
+carrier_delay          float64
+weather_delay          float64
+nas_delay              float64
+security_delay         float64
+late_aircraft_delay    float64
+saved results/obtain_summary.json

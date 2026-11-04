@@ -14,7 +14,7 @@ AdaptiveSparkPlan (10)
 (1) Scan parquet 
 Output [5]: [year#0L, carrier#1, arr_arrived#2, arr_del15#3, Usable#4]
 Batched: true
-Location: InMemoryFileIndex [file:/D:/Freelance/Sanudi NIBM/Code/data/spark_scaled/rows_x25.parquet]
+Location: InMemoryFileIndex [file:/D:/Personal/projects/Sanudi/bts-flight-delay-pipeline/data/spark_scaled/rows_x25.parquet]
 PushedFilters: [IsNotNull(Usable), EqualTo(Usable,true)]
 ReadSchema: struct<year:bigint,carrier:string,arr_arrived:double,arr_del15:double,Usable:boolean>
 

@@ -1,0 +1,37 @@
+{
+  "python": "3.14.2",
+  "os": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+  "logical_cores": 12,
+  "pandas": "2.3.3",
+  "numpy": "2.5.4",
+  "pyarrow": "26.0.1",
+  "ram_gb": 34.0
+}
+WARNING: Using incubator modules: jdk.incubator.vector
+26/11/04 17:07:00 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/04 17:07:01 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Spark 4.3.0 started in 15.1s; local[*] uses 12 cores
+  physical plan saved to results/spark_physical_plan.txt
+  pandas and Spark give the same 439 groups
+     398,233 rows | pandas 0.101s
+     398,233 rows | Spark default (AQE on, 200 shuffle partitions): 1.756s (input partitions 1)
+     398,233 rows | Spark AQE off, 200 shuffle partitions: 5.938s (input partitions 1)
+     398,233 rows | Spark AQE off, 12 shuffle partitions: 0.675s (input partitions 1)
+   1,991,165 rows | pandas 0.315s
+   1,991,165 rows | Spark default (AQE on, 200 shuffle partitions): 1.912s (input partitions 2)
+   1,991,165 rows | Spark AQE off, 200 shuffle partitions: 5.151s (input partitions 2)
+   1,991,165 rows | Spark AQE off, 12 shuffle partitions: 0.710s (input partitions 2)
+   9,955,825 rows | pandas 1.654s
+   9,955,825 rows | Spark default (AQE on, 200 shuffle partitions): 2.439s (input partitions 8)
+   9,955,825 rows | Spark AQE off, 200 shuffle partitions: 7.015s (input partitions 8)
+   9,955,825 rows | Spark AQE off, 12 shuffle partitions: 0.954s (input partitions 8)
+ERROR: The process with PID 39692 (child process of PID 24780) could not be terminated.
+Reason: The operation attempted is not supported.
+ERROR: The process with PID 24780 (child process of PID 32612) could not be terminated.
+Reason: The operation attempted is not supported.
+ERROR: The process with PID 32612 (child process of PID 25188) could not be terminated.
+Reason: The operation attempted is not supported.

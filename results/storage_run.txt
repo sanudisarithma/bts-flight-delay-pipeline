@@ -1,0 +1,43 @@
+{
+  "python": "3.14.2",
+  "os": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+  "logical_cores": 12,
+  "pandas": "2.3.3",
+  "numpy": "2.5.4",
+  "pyarrow": "26.0.1",
+  "ram_gb": 34.0
+}
+benchmark data: 398,233 rows x 21 columns
+CSV ...
+   size 62.7 MB | write 2.87s | read 0.73s | one column 0.292s
+CSV gzip ...
+   size 14.6 MB | write 5.83s | read 0.95s | one column 0.462s
+JSON lines ...
+   size 179.1 MB | write 2.09s | read 3.60s | one column 3.764s
+JSON lines gzip ...
+   size 22.6 MB | write 5.03s | read 3.93s | one column 3.910s
+Pickle ...
+   size 59.2 MB | write 0.09s | read 0.08s | one column 0.088s
+Pickle gzip ...
+   size 9.7 MB | write 3.31s | read 0.15s | one column 0.167s
+Parquet (no compression) ...
+   size 11.1 MB | write 0.53s | read 0.13s | one column 0.007s
+Parquet snappy ...
+   size 9.7 MB | write 0.48s | read 0.10s | one column 0.007s
+Parquet zstd ...
+   size 8.2 MB | write 0.53s | read 0.10s | one column 0.007s
+                  format  size_mb  write_median_s  write_min_s  write_max_s  read_median_s  read_min_s  read_max_s  col_median_s  col_min_s  col_max_s  rows_back  dtype_changes
+                     CSV   62.661           2.866        2.809        3.166          0.725       0.702       0.756         0.292      0.289      0.299     398233              0
+                CSV gzip   14.607           5.831        5.599        6.384          0.951       0.846       1.027         0.462      0.408      0.558     398233              0
+              JSON lines  179.067           2.091        2.048        2.157          3.602       3.565       3.793         3.764      3.567      4.059     398233              0
+         JSON lines gzip   22.592           5.035        4.927        6.440          3.930       3.856       4.771         3.910      3.792      4.433     398233              0
+                  Pickle   59.169           0.091        0.088        0.097          0.083       0.082       0.084         0.088      0.087      0.090     398233              0
+             Pickle gzip    9.749           3.312        3.259        3.364          0.146       0.143       0.152         0.167      0.150      0.173     398233              0
+Parquet (no compression)   11.062           0.527        0.496        0.643          0.132       0.122       0.147         0.007      0.006      0.007     398233              0
+          Parquet snappy    9.713           0.477        0.466        0.499          0.097       0.093       0.099         0.007      0.006      0.031     398233              0
+            Parquet zstd    8.198           0.533        0.502        0.544          0.102       0.099       0.116         0.007      0.006      0.011     398233              0
+YAML side test ...
+format  rows  size_mb  write_median_s  read_median_s
+  YAML 10000    4.817           1.341          1.764
+   CSV 10000    1.557           0.080          0.021

@@ -1,0 +1,77 @@
+{
+  "python": "3.14.2",
+  "os": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+  "logical_cores": 12,
+  "pandas": "2.3.3",
+  "numpy": "2.5.4",
+  "pyarrow": "26.0.1",
+  "ram_gb": 34.0
+}
+benchmark data: 398,233 rows x 21 columns
+CSV ...
+   size 62.7 MB | write 2.92s | read 0.85s | one column 0.488s
+CSV gzip ...
+   size 14.6 MB | write 6.90s | read 0.89s | one column 0.444s
+JSON lines ...
+Traceback (most recent call last):
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\scripts\storage_formats.py", line 201, in <module>
+    main()
+    ~~~~^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\scripts\storage_formats.py", line 167, in main
+    r = time_it(lambda: read_all(path))
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\scripts\storage_formats.py", line 29, in time_it
+    function()
+    ~~~~~~~~^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\scripts\storage_formats.py", line 167, in <lambda>
+    r = time_it(lambda: read_all(path))
+                        ~~~~~~~~^^^^^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\scripts\storage_formats.py", line 49, in <lambda>
+    lambda p: pd.read_json(p, lines=True),
+              ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\io\json\_json.py", line 815, in read_json
+    return json_reader.read()
+           ~~~~~~~~~~~~~~~~^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\io\json\_json.py", line 1012, in read
+    obj = self._get_object_parser(self._combine_lines(data_lines))
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\io\json\_json.py", line 1040, in _get_object_parser
+    obj = FrameParser(json, **kwargs).parse()
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\io\json\_json.py", line 1176, in parse
+    self._parse()
+    ~~~~~~~~~~~^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\io\json\_json.py", line 1391, in _parse
+    self.obj = DataFrame(
+               ~~~~~~~~~^
+        ujson_loads(json, precise_float=self.precise_float), dtype=None
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\core\frame.py", line 855, in __init__
+    arrays, columns, index = nested_data_to_arrays(
+                             ~~~~~~~~~~~~~~~~~~~~~^
+        # error: Argument 3 to "nested_data_to_arrays" has incompatible
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        dtype,
+        ^^^^^^
+    )
+    ^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\core\internals\construction.py", line 520, in nested_data_to_arrays
+    arrays, columns = to_arrays(data, columns, dtype=dtype)
+                      ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\core\internals\construction.py", line 845, in to_arrays
+    content, columns = _finalize_columns_and_data(arr, columns, dtype)
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\core\internals\construction.py", line 945, in _finalize_columns_and_data
+    contents = convert_object_array(contents, dtype=dtype)
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\core\internals\construction.py", line 1071, in convert_object_array
+    arrays = [convert(arr) for arr in content]
+              ~~~~~~~^^^^^
+  File "D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Lib\site-packages\pandas\core\internals\construction.py", line 1030, in convert
+    arr = lib.maybe_convert_objects(
+        arr,
+        try_float=coerce_float,
+        convert_to_nullable_dtype=dtype_backend != "numpy",
+    )
+  File "pandas/_libs/lib.pyx", line 2558, in pandas._libs.lib.maybe_convert_objects
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 3.04 MiB for an array with shape (398233,) and data type uint64
