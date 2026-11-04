@@ -8,6 +8,6 @@
   "pyarrow": "26.0.1",
   "ram_gb": 34.0,
   "spark_version": "4.3.0",
-  "spark_startup_seconds": 15.13,
+  "spark_startup_seconds": 8.8,
   "default_parallelism": 12
 }

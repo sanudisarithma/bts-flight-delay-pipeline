@@ -20,3 +20,9 @@ Environment: Python 3.14.2, Java 21.0.9, Windows 11, Intel processor, 12 logical
 The Word report was not modified. Its old AMD/16-core environment and timings must not be described as this run. Appendix B3 needs correction from delay_by_year.csv; the CSV rates are valid fractions in [0,1]. The download date and licence in the source provenance remain unverified. This integration does not certify that all coursework requirements are met.
 
 Existing outputs were backed up locally in .local-validation/before-run before execution. No existing source analysis logic was rewritten; merge conflicts retained main's equivalent implementation and documentation.
+
+## Follow-up test validation
+On 2026-11-04, tests/test_processing.py was added at the user's request. All 14 collected cases passed in 1.35 seconds. This supersedes the earlier missing-tests status; local_run_summary.json retains the historical initial run. See pytest_output.txt for the current test evidence. Tests use synthetic fixtures and cover loading, input/schema errors, cleaning, input immutability, exclusion flags, failure chaining, report preservation and elapsed-time recording.
+
+## Date-window correction and final document
+The recent carrier and airport analysis now restricts data to 2022-2024 inclusive. All 15 tests passed, including a regression case excluding 2025. Analysis outputs were regenerated. The Word document in docs records these corrected results and discloses AI assistance. Student-specific and unverified provenance fields remain to be completed.

@@ -27,6 +27,6 @@ Dataset download page supplied by the project owner: https://www.kaggle.com/data
 
 ## Evidence and limitations
 
-See results/local_run_summary.json and the corresponding *_run.txt logs for actual execution status. Tests were absent from the merged branches; pytest exit code 5 means no tests collected, not a pass. Existing report values must be compared with regenerated outputs before reuse. Timing results are specific to the machine and installed versions recorded in results/*system.json.
+See results/local_run_summary.json and the corresponding *_run.txt logs for actual execution status. The initial merged branches contained no tests. A subsequent local test suite in tests/test_processing.py now passes 15 cases; see results/pytest_output.txt. The initial run summary remains historical. Existing report values must be compared with regenerated outputs before reuse. Timing results are specific to the machine and installed versions recorded in results/*system.json.
 
 The original results and figures are preserved locally under .local-validation/before-run (excluded from Git). This README documents local integration and execution, not completion of every coursework criterion.

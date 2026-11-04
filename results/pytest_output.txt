@@ -2,6 +2,22 @@
 platform win32 -- Python 3.14.2, pytest-9.2.0, pluggy-1.7.0 -- D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\venv\Scripts\python.exe
 cachedir: .pytest_cache
 rootdir: D:\Personal\projects\Sanudi\bts-flight-delay-pipeline
-collecting ... collected 0 items
+collecting ... collected 15 items
 
-============================ no tests ran in 0.05s ============================
+tests/test_processing.py::test_csv_loads_values_and_records_row_count PASSED [  6%]
+tests/test_processing.py::test_schema_failure_preserves_last_successful_count PASSED [ 13%]
+tests/test_processing.py::test_missing_file_raises_file_not_found PASSED [ 20%]
+tests/test_processing.py::test_invalid_loader_path_raises_value_error[] PASSED [ 26%]
+tests/test_processing.py::test_invalid_loader_path_raises_value_error[None] PASSED [ 33%]
+tests/test_processing.py::test_invalid_loader_path_raises_value_error[input.json] PASSED [ 40%]
+tests/test_processing.py::test_cleaner_rejects_invalid_input[None] PASSED [ 46%]
+tests/test_processing.py::test_cleaner_rejects_invalid_input[data1] PASSED [ 53%]
+tests/test_processing.py::test_cleaner_rejects_invalid_input[data2] PASSED [ 60%]
+tests/test_processing.py::test_default_pipeline_cleans_without_mutating_input PASSED [ 66%]
+tests/test_processing.py::test_negative_counts_are_retained_but_excluded PASSED [ 73%]
+tests/test_processing.py::test_domain_error_is_preserved PASSED          [ 80%]
+tests/test_processing.py::test_failed_step_preserves_input_report_and_updates_elapsed PASSED [ 86%]
+tests/test_processing.py::test_report_return_value_cannot_change_saved_report PASSED [ 93%]
+tests/test_processing.py::test_recent_window_excludes_partial_future_year PASSED [100%]
+
+============================= 15 passed in 4.60s ==============================

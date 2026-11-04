@@ -98,6 +98,13 @@ def scrub(raw):
 
 
 
+def recent_period_analyzer(analyzer, first_year, last_year):
+    """Return an analyzer restricted to the inclusive complete-year window."""
+    rows = analyzer.get_rows(DelayAnalyzer.NEEDED)
+    rows = rows[rows["year"].between(first_year, last_year)].copy()
+    return DelayAnalyzer(rows)
+
+
 def explore(analyzer):
     print("== Explore ==")
     found = {
@@ -111,6 +118,7 @@ def explore(analyzer):
     first_recent = last_full - RECENT_YEARS + 1
     found["last_full_year"] = last_full
     found["recent_window"] = [first_recent, last_full]
+    recent = recent_period_analyzer(analyzer, first_recent, last_full)
 
     by_year = analyzer.rate_by("year", min_flights=0).sort_index()
     by_year["months_in_data"] = analyzer.months_per_year()
@@ -145,12 +153,12 @@ def explore(analyzer):
     ax.set_ylabel("Arrived flights 15+ min late (%)")
     save_fig(fig, "fig2_delay_rate_by_month.png")
 
-    by_carrier = analyzer.rate_by("carrier", min_flights=0, first_year=first_recent)
+    by_carrier = recent.rate_by("carrier", min_flights=0)
     by_carrier = busiest_then_rank(by_carrier, TOP_CARRIERS)
     names = analyzer.names_for("carrier", "carrier_label")
     by_carrier.insert(0, "carrier_name", [names[c] for c in by_carrier.index])
     by_carrier.to_csv(os.path.join(config.RESULTS_DIR, "delay_by_carrier_recent.csv"))
-    recent_rate = analyzer.overall_delay_rate(first_year=first_recent)
+    recent_rate = recent.overall_delay_rate()
     found["recent_delay_rate"] = recent_rate
     found["carriers_ranked"] = len(by_carrier)
     found["worst_carrier"] = str(by_carrier.index[0])
@@ -183,7 +191,7 @@ def explore(analyzer):
     ax.legend(loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.32))
     save_fig(fig, "fig4_delay_causes_by_year.png")
 
-    all_airports = analyzer.rate_by("airport", min_flights=1000, first_year=first_recent)
+    all_airports = recent.rate_by("airport", min_flights=1000)
     by_airport = busiest_then_rank(all_airports, TOP_AIRPORTS)
     anames = analyzer.names_for("airport", "airport_label")
     by_airport.insert(0, "airport_name", [anames[a] for a in by_airport.index])

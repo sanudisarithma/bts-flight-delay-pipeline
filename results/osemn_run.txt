@@ -29,15 +29,15 @@ add one name label per carrier / airport code            159694       398233    
   - flag impossible values: negative number: 2; late + cancelled + diverted > arr_flights: 0; month not 1-12: 0; year outside 2000-2030: 0
   - flag cause totals that do not add up: cause counts != arr_del15: 10; cause minutes != arr_delay: 9
   - mark usable rows: rows left out of the analysis: 659 (of these, only because of zero flights: 0)
-  cleaning took 7.93 seconds
+  cleaning took 4.77 seconds
   cleaned data saved to D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\data\processed\clean.parquet
 == Explore ==
   saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig1_delay_rate_by_year.png
   saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig2_delay_rate_by_month.png
   saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig3_delay_rate_by_carrier.png
   saved D:\Personal\projects\Sanudi\bts-flight-delay-pipeline\figures\fig4_delay_causes_by_year.png
-  overall delay rate 0.196; recent 0.206
-  spearman(airport size, delay rate) = 0.489
+  overall delay rate 0.196; recent 0.207
+  spearman(airport size, delay rate) = 0.504
 == Model ==
   train: years before 2024 (344,399 rows)   test: 2024 (20,316 rows)
                             model    mae   rmse      r2
@@ -54,6 +54,6 @@ arr_flights       0.00140
   19.6% of arrived flights were 15+ min late over the whole data (1.9% of scheduled flights were cancelled).
   Lowest year 2020 (10.0%), highest year 2007 (24.8%).
   Best month 9 (15.1%), worst month 6 (23.5%).
-  Carriers 2022-2024: worst F9 (30.4%), best PT (14.7%).
+  Carriers 2022-2024: worst F9 (30.5%), best PT (14.5%).
   Lowest test MAE: HistGradientBoostingRegressor (0.0692).
   saved results/key_findings.json
